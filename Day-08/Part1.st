@@ -1,4 +1,4 @@
-| stream input lines points diffs sortedDiffs top groups iterate diffed topGroups result topCount |
+| stream input lines points diffs sortedDiffs top groups iterate diffed topGroups result topCount pointToPoint grouped |
 
 topCount := 1000.
 
@@ -46,7 +46,7 @@ top do: [:x |
 	(pointToPoint at: i1 ifAbsentPut: [OrderedCollection new]) add: i0.
 ].
 
-
+grouped := nil.
 iterate := nil.
 iterate := [:group :x  |
 	(grouped includes: x) ifFalse: [
