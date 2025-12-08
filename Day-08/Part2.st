@@ -1,4 +1,4 @@
-| stream input lines points diffs sortedDiffs top groups iterate diffed |
+| stream input lines points diffs diffed sortedDiffs iterate |
 
 Transcript clear.
 
@@ -33,24 +33,25 @@ points do: [:p0 |
 		]
 	]
 ].
-
 sortedDiffs := diffs sorted: [:a :b | (a at: 3) < (b at: 3)].
 
 iterate := nil.
-iterate := [:group :x  |
+iterate := [:grouped :pointToPoint :group :x |
 	(grouped includes: x) ifFalse: [
 		| items |
 		group add: x.
 		grouped add: x.
 		items := pointToPoint at: x.
 		items do: [:i |
-			iterate value: group value: i.
+			iterate value: grouped value: pointToPoint value: group value: i.
 		]
 	]
 ].
 
 1 to: diffs size do: [:i |
+	| top pointToPoint groups |
 	top := sortedDiffs first: i.
+	
 	pointToPoint := Dictionary new.
 	top do: [:x |
 		| i0 i1 |
@@ -59,6 +60,7 @@ iterate := [:group :x  |
 		(pointToPoint at: i0 ifAbsentPut: [OrderedCollection new]) add: i1.
 		(pointToPoint at: i1 ifAbsentPut: [OrderedCollection new]) add: i0.
 	].
+
 	groups := OrderedCollection new.
 	grouped := Set new.
 	pointToPoint keysDo: [:x |
@@ -66,14 +68,18 @@ iterate := [:group :x  |
 		(grouped includes: x) ifFalse: [
 			group := Set new.
 			groups add: group.
-			iterate value: group value: x.
+			iterate value: grouped value: pointToPoint value: group value: x.
 		]
 	].
+
 	(groups size = 1 and: [ (groups at: 1) size = lines size])
 		ifTrue: [
-			| p |
+			| p x0 x1 result |
 			p := sortedDiffs at: i.
-			Transcript show: 'i: ', i, ' p: ', p, ' = ', (((p at: 1) at: 1) * ((p at: 2) at: 1)) printString; cr.
+			x0 := (p at: 1) at: 1.
+			x1 := (p at: 2) at: 1.
+			result := x0 * x1.
+			Transcript show: 'i: ', i, ' p: ', p, ' = ', result printString; cr.
 			^nil
 		]
 ].
