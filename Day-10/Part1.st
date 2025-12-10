@@ -21,6 +21,7 @@ games := OrderedCollection new.
 ].
 
 cache := nil.
+cacheHits := nil.
 counts := nil.
 
 pressButtons := nil.
@@ -46,7 +47,7 @@ pressButtons := [:queue :allButtons :answer |
 		].
 	(board = answer)
 		ifTrue: [
-			Transcript show: 'Finished' , ( counts size) printString; cr.
+			Transcript show: 'Finished ' , (counts size) , ' Count: ', count, ' Cache Size: ', (cache size), ' Cache Hits ', (cacheHits) printString; cr.
 			queue removeAll.
 			count
 			]
@@ -63,6 +64,7 @@ pressButtons := [:queue :allButtons :answer |
 				newBoard := board copy.
 				newCacheKey := newBoard , index.
 				(cache includes: newCacheKey)
+					ifTrue: [ cacheHits := cacheHits + 1 ]
 					ifFalse: [
 						newGameState := GameState
 							withState: newBoard
@@ -85,6 +87,7 @@ games do: [:game |
 	buttons := game at: 2.
 	queue := OrderedCollection new.
 	cache := Set new.
+	cacheHits := 0.
 	buttons withIndexDo: [:btns :index |
 		| state |
 		state := GameState
