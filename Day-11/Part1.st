@@ -21,9 +21,7 @@ queue := nil.
 total := 0.
 
 move := nil.
-move := [:path |
-	| device |
-	device := path at: 1.
+move := [:device |
 	(device = 'out')
 		ifTrue: [
 			1 ]
@@ -31,20 +29,13 @@ move := [:path |
 			| outputs |
 			outputs := devices at: device.
 			outputs do: [:o |
-				| newPath |
-				allPath := path at: 2.
-				allPath add: device.
-				newPath := Array with: o with: allPath.
-				queue add: newPath.
+				queue add: o.
 				].
 			nil
 			]
 	].
 
-queue := OrderedCollection new.
-cache := Set new.
-cacheHits := 0.
-queue add: (Array with: 'you' with: OrderedCollection new).
+queue := OrderedCollection with: 'you'.
 [ queue isEmpty ] whileFalse: [
 	| path count |
 	path := queue removeFirst.
